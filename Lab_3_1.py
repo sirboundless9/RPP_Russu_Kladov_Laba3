@@ -1,39 +1,59 @@
-#Пункт 1
 import http.client
+#Задание 1: Отправить HTTP запрос GET /number/{Вариант}.
 import json
+def operate(data: str, left: int):
+    dict = json.loads(data)
+    if dict['operation'] == 'sum':
+        return left + dict['number']
+    if dict['operation'] == 'sub':
+        return left - dict['number']
+    if dict['operation'] == 'mul':
+        return left * dict['number']
+    if dict['operation'] == 'div':
+        return left // dict['number']
 conn = http.client.HTTPConnection("167.172.172.227:8000")
-conn.request('GET', '/number/1',)
-r1 = conn.getresponse().read().decode()
-r1_json = json.loads(r1)
-print(r1_json['number'])
-#Пункт 2
-conn.request('GET', '/number/?option=1',)
-r2 = conn.getresponse().read().decode()
-r2_json = json.loads(r2)
-print(r2)
-res = r1_json['number'] * r2_json['number']
-print(res)
-#Пункт 3
+conn.request('GET', '/number/1')
+r1 = conn.getresponse()
+print(r1.status, r1.reason)
+data1 = r1.read().decode()
+left = json.loads(data1)['number']
+print(left)
+print(data1)
+#Задание 2: Отправить HTTP запрос GET /number/ с параметром запроса option={Вариант}.
+conn = http.client.HTTPConnection("167.172.172.227:8000")
+conn.request('GET', '/number/?option=1')
+r1 = conn.getresponse()
+print(r1.status, r1.reason)
+data1 = r1.read().decode()
+left = operate(data1, left)
+print(left)
+print(data1)
+#Задание 3: Отправить HTTP запрос POST /number/ с телом option={Вариант}.
+conn = http.client.HTTPConnection("167.172.172.227:8000")
 headers = {'Content-type': 'application/x-www-form-urlencoded'}
 conn.request('POST', '/number/', 'option=1', headers)
-r3 = conn.getresponse().read().decode()
-r3_json = json.loads(r3)
-print(r3)
-res2 = r3_json['number'] - r2_json['number']
-print(res2)
-#Пункт 4
+r1 = conn.getresponse()
+print(r1.status, r1.reason)
+data1 = r1.read().decode()
+left = operate(data1, left)
+print(left)
+print(data1)
+#Задание 4: Отправить HTTP запрос PUT /number/ с телом JSON {"option": {Вариант}}.
+conn = http.client.HTTPConnection("167.172.172.227:8000")
 headers = {'Content-type': 'application/json'}
-conn.request('PUT', '/number/', '{"option":1}', headers)
-r4 = conn.getresponse().read().decode()
-r4_json = json.loads(r4)
-print(r4_json)
-res3 = r4_json['number']//r3_json['number']
-print(res3)
-#Пункт 5
-conn.request('DELETE', '/number/', '{"option":1}',)
-r5 = conn.getresponse().read().decode()
-r5_json = json.loads(r5)
-print(r5_json)
-res4 = r5_json['number'] + r4_json['number']
-print(res4)
-
+conn.request('PUT', '/number/', json.dumps({'option': 1}), headers)
+r1 = conn.getresponse()
+print(r1.status, r1.reason)
+data1 = r1.read().decode()
+left = operate(data1, left)
+print(left)
+print(data1)
+#Задание 5: Отправить HTTP запрос DELETE /number/ с телом JSON {"option": {Вариант}}.
+conn = http.client.HTTPConnection("167.172.172.227:8000")
+conn.request('DELETE', '/number/', json.dumps({'option': 1}))
+r1 = conn.getresponse()
+print(r1.status, r1.reason)
+data1 = r1.read().decode()
+left = operate(data1, left)
+print(left)
+print(data1)
